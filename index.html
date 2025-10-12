@@ -9,12 +9,10 @@
     <style>
         :root { --bg-color: #121212; --surface-color: #1e1e1e; --primary-color: #bb86fc; --primary-variant: #3700b3; --secondary-color: #03dac6; --on-bg-color: #e0e0e0; --on-surface-color: #cccccc; --border-color: #333333; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--on-bg-color); user-select: none; -webkit-user-select: none;
-            /* This is the rule that prevents scrolling on desktop */
-            overflow: hidden; 
-        }
+        html, body { height: 100%; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--on-bg-color); user-select: none; -webkit-user-select: none; overflow: hidden; }
         #background-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .app-container { display: flex; height: 100vh; position: relative; z-index: 1; }
+        .app-container { display: flex; height: 100%; position: relative; z-index: 1; }
         .sidebar { width: 320px; background-color: var(--surface-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 2; flex-shrink: 0; }
         .sidebar header { padding: 20px; border-bottom: 1px solid var(--border-color); }
         .sidebar h1 { font-size: 1.5rem; margin-bottom: 20px; color: var(--primary-color); }
@@ -32,18 +30,18 @@
         .footer-credit { padding: 15px 20px; font-size: 0.75rem; color: #777; text-align: center; border-top: 1px solid var(--border-color); flex-shrink: 0; }
         .footer-credit a { color: #999; text-decoration: none; }
         .footer-credit a:hover { color: var(--secondary-color); }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; padding: 20px; height: 100vh; background-color: transparent; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; padding: 20px; height: 100%; background-color: transparent; }
         .viewer-container { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .welcome-message { text-align: center; color: var(--on-surface-color); }
         .welcome-message h2 { margin-bottom: 10px; }
         #image-display-area { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; margin-bottom: 20px; min-height: 150px; }
         #main-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.3s ease; }
-        .controls { width: 100%; max-width: 800px; background-color: var(--surface-color); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); flex-shrink: 0; }
-        .top-controls { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .controls { width: 100%; max-width: 800px; background-color: var(--surface-color); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); flex-shrink: 0; display: flex; flex-direction: column; }
+        .top-controls { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 15px; }
         .slider-container { flex-grow: 1; display: flex; align-items: center; }
         .slider-container label { margin-right: 10px; }
         .timer-display { font-size: 2.5rem; text-align: center; color: var(--secondary-color); font-variant-numeric: tabular-nums; }
-        #visualize-btn { width: 100%; padding: 15px; font-size: 1.2rem; font-weight: bold; background-color: var(--secondary-color); color: var(--bg-color); border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; transition: transform 0.1s, box-shadow 0.1s; }
+        #visualize-btn { width: 100%; padding: 15px; font-size: 1.2rem; font-weight: bold; background-color: var(--secondary-color); color: var(--bg-color); border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; transition: transform 0.1s, box-shadow 0.1s; }
         #visualize-btn:active { transform: scale(0.98); box-shadow: 0 0 10px var(--secondary-color); }
         .hidden { display: none !important; }
 
@@ -51,7 +49,8 @@
         input[type="range"]::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--secondary-color) var(--slider-progress, 0%), var(--border-color) var(--slider-progress, 0%)); height: 5px; border-radius: 5px; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; margin-top: -5px; background-color: var(--secondary-color); height: 15px; width: 15px; border-radius: 50%; border: 2px solid var(--surface-color); box-shadow: 0 0 5px rgba(3, 218, 198, 0.5); }
         
-        .session-history { margin-top: 20px; }
+        .training-controls { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
+        .session-history { min-height: 0; /* Flexbox fix */ }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .history-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .history-controls label, .history-controls input, .history-controls select, .history-controls button { font-size: 0.8rem; }
@@ -71,17 +70,15 @@
         .pagination-controls button:not(:disabled):hover { background-color: var(--border-color); }
         .delete-log-btn { background: none; border: none; color: #888; cursor: pointer; font-size: 1.1rem; }
         .delete-log-btn:hover { color: #ff6b6b; }
-        #session-note-input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--on-bg-color); padding: 8px; border-radius: 4px; margin-top: 20px; }
+        #session-note-input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--on-bg-color); padding: 8px; border-radius: 4px; }
 
-        /* --- MOBILE RESPONSIVE STYLES --- */
         @media (max-width: 768px) {
-            body {
-                overflow: auto; /* THE FIX: Allows the main body to scroll on mobile */
-            }
+            body { overflow: auto; height: auto; }
             .app-container { flex-direction: column; height: auto; min-height: 100vh; }
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .image-list { max-height: 25vh; } 
-            .main-content { height: auto; flex-grow: 1; padding: 15px; }
+            .image-list { max-height: 30vh; } 
+            .main-content { height: auto; padding: 15px; flex-grow: 1; }
+            .viewer-container { flex-grow: 1; }
             .top-controls { flex-direction: column; gap: 15px; }
             .timer-display { order: -1; }
             .history-controls { flex-direction: column; align-items: stretch; gap: 8px; }
@@ -104,7 +101,13 @@
                 <div id="welcome-message" class="welcome-message"><h2>Welcome to Visualization Trainer</h2><p>Add an image from the sidebar to begin your training.</p></div>
                 <div id="image-display-area" class="hidden"><img id="main-image" src="" alt="Visualization Image"></div>
                 <div id="controls-area" class="controls hidden">
-                    <div class="top-controls"><div class="slider-container"><label for="size-slider">Size:</label><input type="range" id="size-slider" min="20" max="100" value="100"></div><div class="timer-display"><span id="timer">0.00</span>s</div></div>
+                    <!-- NEW: Training Controls Wrapper -->
+                    <div class="training-controls">
+                        <div class="top-controls"><div class="slider-container"><label for="size-slider">Size:</label><input type="range" id="size-slider" min="20" max="100" value="100"></div><div class="timer-display"><span id="timer">0.00</span>s</div></div>
+                        <input type="text" id="session-note-input" placeholder="Add a short note...">
+                        <button id="visualize-btn">Hold to Visualize</button>
+                    </div>
+                    <!-- Session history is now separate -->
                     <div class="session-history">
                         <div class="history-header"><h3>Session History (<span id="high-score">N/A</span>)</h3><div class="history-controls"><label for="items-per-page">Show:</label><select id="items-per-page"><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></div></div>
                         <div class="history-controls" style="margin-bottom: 10px; justify-content: space-between;">
@@ -114,8 +117,6 @@
                         <div class="history-table-container"><table id="history-table"><thead><tr><th>Time</th><th>Date</th><th>Note</th><th>Actions</th></tr></thead><tbody id="session-list-body"></tbody></table></div>
                         <div class="pagination-controls"><button id="prev-page-btn">&laquo; Prev</button><span id="page-info">Page 1 of 1</span><button id="next-page-btn">Next &raquo;</button></div>
                     </div>
-                    <input type="text" id="session-note-input" placeholder="Add a short note...">
-                    <button id="visualize-btn">Hold to Visualize</button>
                 </div>
             </div>
         </main>
@@ -161,7 +162,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td>${session.time.toFixed(2)}s</td><td>${new Date(session.date).toLocaleString()}</td><td>${session.note}</td><td><button class="delete-log-btn" data-date="${session.date}">×</button></td>`;
                 sessionListBody.appendChild(row);
-});
+            });
             pageInfo.textContent = `Page ${historyState.currentPage} of ${totalPages}`;
             prevPageBtn.disabled = historyState.currentPage === 1;
             nextPageBtn.disabled = historyState.currentPage === totalPages;
