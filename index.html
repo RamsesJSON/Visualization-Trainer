@@ -7,26 +7,33 @@
     <title>VisuTrain</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         :root {
-            --bg-dark: #0a0a0f;
-            --bg-card: #14141f;
-            --bg-elevated: #1c1c2a;
-            --accent: #8b5cf6;
-            --accent-glow: rgba(139, 92, 246, 0.4);
-            --accent-secondary: #06d6a0;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --text-muted: #64748b;
-            --border: rgba(255, 255, 255, 0.08);
-            --danger: #ef4444;
-            --radius: 16px;
-            --radius-sm: 10px;
-            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-dark: #0c0c0c;
+            --bg-card: #141414;
+            --bg-elevated: #1a1a1a;
+            --gold: #d4af37;
+            --gold-light: #f4e4a6;
+            --gold-dark: #a68b2a;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --text: #f5f5f5;
+            --text-dim: #a0a0a0;
+            --text-muted: #666;
+            --border: rgba(212, 175, 55, 0.15);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --danger: #c94040;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --nav-height: 72px;
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Inter', sans-serif;
         }
 
         * {
@@ -40,20 +47,32 @@
             height: 100%;
             overflow: hidden;
             background: var(--bg-dark);
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             color: var(--text);
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
 
-        /* ========== MAIN APP ========== */
+        /* Subtle texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========== APP ========== */
         .app {
             height: 100%;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
 
-        /* ========== VIEWS CONTAINER ========== */
+        /* ========== VIEWS ========== */
         .views {
             flex: 1;
             position: relative;
@@ -62,16 +81,13 @@
 
         .view {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 24px;
+            inset: 0;
+            padding: 32px;
             overflow-y: auto;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(20px);
-            transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+            transform: translateY(16px);
+            transition: all var(--transition);
         }
 
         .view.active {
@@ -80,41 +96,44 @@
             transform: translateY(0);
         }
 
-        /* ========== BOTTOM NAV ========== */
+        /* ========== NAVIGATION ========== */
         .nav {
             height: var(--nav-height);
             background: var(--bg-card);
             border-top: 1px solid var(--border);
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 4px;
             padding: 0 16px;
-            flex-shrink: 0;
         }
 
         .nav-btn {
             flex: 1;
-            max-width: 140px;
-            height: 52px;
+            max-width: 100px;
+            height: 56px;
             background: transparent;
             border: none;
-            border-radius: var(--radius-sm);
             color: var(--text-muted);
-            font-family: inherit;
-            font-size: 0.8rem;
+            font-family: var(--font-body);
+            font-size: 0.7rem;
             font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
             cursor: pointer;
             transition: all var(--transition);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
+            border-radius: var(--radius-sm);
+            margin: 8px 0;
         }
 
-        .nav-btn .icon {
-            font-size: 1.4rem;
+        .nav-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke-width: 1.5;
         }
 
         .nav-btn:hover {
@@ -123,8 +142,8 @@
         }
 
         .nav-btn.active {
-            color: var(--accent);
-            background: rgba(139, 92, 246, 0.12);
+            color: var(--gold);
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
         }
 
         /* ========== TRAIN VIEW ========== */
@@ -134,72 +153,77 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 32px;
         }
 
         .train-empty {
-            max-width: 360px;
+            max-width: 400px;
         }
 
         .train-empty-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--accent) 0%, #06d6a0 100%);
-            border-radius: 50%;
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            margin: 0 auto 24px;
-            animation: pulse-glow 3s ease-in-out infinite;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-dark) 100%);
         }
 
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 30px var(--accent-glow);
-            }
-
-            50% {
-                box-shadow: 0 0 60px var(--accent-glow), 0 0 90px rgba(6, 214, 160, 0.2);
-            }
+        .train-empty-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--gold);
+            stroke-width: 1.5;
         }
 
         .train-empty h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
             margin-bottom: 12px;
+            color: var(--gold-light);
         }
 
         .train-empty p {
             color: var(--text-dim);
-            line-height: 1.6;
-            margin-bottom: 24px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 32px;
         }
 
-        .train-empty-btn {
+        .btn-primary {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 14px 28px;
-            background: var(--accent);
+            gap: 10px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             border: none;
             border-radius: 50px;
-            color: white;
-            font-family: inherit;
-            font-size: 1rem;
+            color: var(--bg-dark);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
             font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             cursor: pointer;
             transition: all var(--transition);
         }
 
-        .train-empty-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px var(--accent-glow);
+        .btn-primary svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
         }
 
-        /* Training Active State */
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px var(--gold-glow);
+        }
+
+        /* Training Active */
         .train-active {
             width: 100%;
             height: 100%;
@@ -230,36 +254,46 @@
             max-height: 100%;
             object-fit: contain;
             border-radius: var(--radius);
-            transition: transform var(--transition);
+            border: 1px solid var(--border-subtle);
+            transition: transform var(--transition), box-shadow var(--transition);
         }
 
         .train-image-wrap:hover .train-image {
-            transform: scale(1.02);
+            transform: scale(1.01);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
 
         .train-tap-hint {
             position: absolute;
-            bottom: 20px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--bg-elevated);
+            background: var(--bg-card);
             padding: 10px 20px;
             border-radius: 50px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            border: 1px solid var(--border);
-            pointer-events: none;
-            opacity: 0.8;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .train-tap-hint svg {
+            width: 14px;
+            height: 14px;
+            color: var(--gold);
         }
 
         .train-stats {
             display: flex;
             justify-content: center;
-            gap: 32px;
-            padding: 20px;
+            gap: 48px;
+            padding: 24px;
+            margin-top: 24px;
             background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
             border-radius: var(--radius);
-            margin-top: 20px;
         }
 
         .train-stat {
@@ -267,16 +301,17 @@
         }
 
         .train-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent);
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--gold);
         }
 
         .train-stat-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             margin-top: 4px;
         }
 
@@ -284,24 +319,28 @@
         .gallery-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+            align-items: baseline;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .gallery-header h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--gold-light);
         }
 
         .gallery-count {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
         }
 
         .gallery-card {
@@ -310,18 +349,19 @@
             overflow: hidden;
             cursor: pointer;
             position: relative;
+            border: 1px solid var(--border-subtle);
             transition: all var(--transition);
-            border: 2px solid transparent;
         }
 
         .gallery-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--gold);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gold-glow);
         }
 
         .gallery-card.selected {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px var(--accent-glow);
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px var(--gold), 0 16px 48px rgba(0, 0, 0, 0.4);
         }
 
         .gallery-card img {
@@ -333,8 +373,8 @@
         .gallery-card-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
-            padding: 12px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 60%);
+            padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -348,9 +388,10 @@
         }
 
         .gallery-card-best {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-secondary);
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gold);
         }
 
         .gallery-card-sessions {
@@ -360,21 +401,25 @@
 
         .gallery-card-delete {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 10px;
+            right: 10px;
             width: 28px;
             height: 28px;
             background: rgba(0, 0, 0, 0.6);
             border: none;
             border-radius: 50%;
-            color: var(--text-dim);
-            font-size: 1rem;
+            color: var(--text-muted);
             cursor: pointer;
             opacity: 0;
             transition: all var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .gallery-card-delete svg {
+            width: 14px;
+            height: 14px;
         }
 
         .gallery-card:hover .gallery-card-delete {
@@ -386,84 +431,96 @@
             color: white;
         }
 
-        /* Add Card */
         .gallery-add {
             aspect-ratio: 1;
-            border: 2px dashed var(--border);
+            border: 1px dashed var(--border);
             border-radius: var(--radius);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
             cursor: pointer;
             transition: all var(--transition);
             color: var(--text-muted);
         }
 
         .gallery-add:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(139, 92, 246, 0.05);
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.03);
         }
 
-        .gallery-add-icon {
-            font-size: 2rem;
+        .gallery-add svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 1.5;
         }
 
-        .gallery-add-text {
-            font-size: 0.85rem;
-            font-weight: 500;
+        .gallery-add span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
         /* ========== STATS VIEW ========== */
         .stats-header {
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .stats-header h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--gold-light);
             margin-bottom: 4px;
         }
 
         .stats-header p {
             color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 32px;
         }
 
         .stat-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 24px;
             text-align: center;
+            transition: all var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: var(--border);
         }
 
         .stat-card-value {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--gold);
         }
 
         .stat-card-label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 8px;
         }
 
         .history-section {
             background: var(--bg-card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
             border-radius: var(--radius);
             overflow: hidden;
         }
@@ -472,53 +529,43 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .history-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--gold-light);
         }
 
         .history-filters {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
         }
 
-        .history-filters select,
-        .history-filters input,
-        .history-filters button {
+        .history-filters select {
             padding: 8px 12px;
             background: var(--bg-elevated);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
             border-radius: var(--radius-sm);
             color: var(--text);
             font-size: 0.8rem;
-            font-family: inherit;
-        }
-
-        .history-filters button {
-            cursor: pointer;
-            transition: background var(--transition);
-        }
-
-        .history-filters button:hover {
-            background: var(--accent);
+            font-family: var(--font-body);
         }
 
         .history-list {
-            max-height: 300px;
+            max-height: 280px;
             overflow-y: auto;
         }
 
         .history-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
+            gap: 20px;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-subtle);
             transition: background var(--transition);
         }
 
@@ -531,9 +578,10 @@
         }
 
         .history-item-time {
+            font-family: var(--font-display);
             font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-secondary);
+            font-weight: 600;
+            color: var(--gold);
             min-width: 80px;
         }
 
@@ -547,9 +595,9 @@
             flex: 1;
             font-size: 0.85rem;
             color: var(--text-muted);
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .history-item-delete {
@@ -560,42 +608,50 @@
             padding: 4px;
             border-radius: 4px;
             transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-item-delete svg {
+            width: 16px;
+            height: 16px;
         }
 
         .history-item-delete:hover {
             color: var(--danger);
-            background: rgba(239, 68, 68, 0.1);
         }
 
         .history-empty {
-            padding: 40px 20px;
+            padding: 48px 24px;
             text-align: center;
             color: var(--text-muted);
+            font-style: italic;
         }
 
         .history-pagination {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
-            padding: 12px;
-            border-top: 1px solid var(--border);
+            gap: 20px;
+            padding: 16px;
+            border-top: 1px solid var(--border-subtle);
         }
 
         .history-pagination button {
             padding: 8px 16px;
             background: var(--bg-elevated);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
             border-radius: var(--radius-sm);
             color: var(--text-dim);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all var(--transition);
         }
 
         .history-pagination button:hover:not(:disabled) {
-            background: var(--accent);
-            color: white;
+            border-color: var(--gold);
+            color: var(--gold);
         }
 
         .history-pagination button:disabled {
@@ -604,7 +660,7 @@
         }
 
         .history-pagination span {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
         }
 
@@ -625,78 +681,99 @@
             display: flex;
         }
 
+        .immersive::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
+            pointer-events: none;
+        }
+
         .immersive-image {
             max-width: 90%;
             max-height: 75%;
             object-fit: contain;
             border-radius: var(--radius);
-            transition: opacity 0.4s ease;
+            transition: opacity 0.5s ease;
+            z-index: 1;
         }
 
         .immersive-timer {
             position: absolute;
-            top: 24px;
-            right: 24px;
-            font-size: 2.5rem;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            color: var(--accent-secondary);
-            text-shadow: 0 0 30px var(--accent-glow);
+            top: 32px;
+            right: 32px;
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 500;
+            color: var(--gold);
+            text-shadow: 0 0 40px var(--gold-glow);
+            z-index: 2;
         }
 
         .immersive-hint {
             position: absolute;
-            bottom: 32px;
-            font-size: 0.9rem;
+            bottom: 40px;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(20, 20, 20, 0.8);
             padding: 12px 24px;
             border-radius: 50px;
+            border: 1px solid var(--border-subtle);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .immersive-hint kbd {
-            display: inline-block;
-            padding: 3px 8px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            background: var(--bg-elevated);
             border-radius: 4px;
-            font-family: inherit;
-            color: var(--accent);
+            font-family: var(--font-body);
+            color: var(--gold);
+            font-size: 0.8rem;
         }
 
         .immersive-close {
             position: absolute;
-            top: 24px;
-            left: 24px;
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
+            top: 32px;
+            left: 32px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
             border-radius: 50%;
-            color: var(--text-dim);
-            font-size: 1.5rem;
+            color: var(--text-muted);
             cursor: pointer;
             transition: all var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 2;
+        }
+
+        .immersive-close svg {
+            width: 20px;
+            height: 20px;
         }
 
         .immersive-close:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
+            border-color: var(--text-muted);
         }
 
         /* ========== HELP MODAL ========== */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
             z-index: 2000;
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .modal-overlay.active {
@@ -707,7 +784,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            max-width: 440px;
+            max-width: 480px;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
@@ -717,23 +794,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
+            padding: 24px;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .modal-header h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-header h2 svg {
+            width: 22px;
+            height: 22px;
+            color: var(--gold);
         }
 
         .modal-close {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: var(--bg-elevated);
-            border: none;
+            border: 1px solid var(--border-subtle);
             border-radius: 50%;
-            color: var(--text-dim);
-            font-size: 1.1rem;
+            color: var(--text-muted);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -741,9 +828,14 @@
             transition: all var(--transition);
         }
 
+        .modal-close svg {
+            width: 18px;
+            height: 18px;
+        }
+
         .modal-close:hover {
             color: white;
-            background: var(--danger);
+            border-color: var(--text-muted);
         }
 
         .modal-body {
@@ -751,7 +843,7 @@
         }
 
         .help-section {
-            margin-bottom: 20px;
+            margin-bottom: 28px;
         }
 
         .help-section:last-child {
@@ -759,13 +851,19 @@
         }
 
         .help-section h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 12px;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gold);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .help-section h3 svg {
+            width: 18px;
+            height: 18px;
         }
 
         .help-list {
@@ -775,9 +873,9 @@
         .help-list li {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-subtle);
             font-size: 0.9rem;
             color: var(--text-dim);
         }
@@ -787,20 +885,21 @@
         }
 
         .help-list kbd {
-            min-width: 50px;
+            min-width: 48px;
             padding: 6px 10px;
             background: var(--bg-elevated);
-            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
             text-align: center;
-            font-family: inherit;
+            font-family: var(--font-body);
             font-size: 0.8rem;
-            color: var(--accent);
+            color: var(--gold);
         }
 
         /* ========== MOBILE ========== */
         @media (max-width: 600px) {
             .view {
-                padding: 16px;
+                padding: 20px;
             }
 
             .gallery-grid {
@@ -809,8 +908,8 @@
             }
 
             .train-stats {
-                gap: 20px;
-                padding: 16px;
+                gap: 24px;
+                padding: 20px;
             }
 
             .stats-cards {
@@ -819,7 +918,7 @@
 
             .history-filters {
                 width: 100%;
-                flex-direction: column;
+                flex-wrap: wrap;
             }
 
             .history-item {
@@ -828,20 +927,28 @@
             }
 
             .immersive-timer {
-                font-size: 1.8rem;
-                top: 16px;
-                right: 16px;
+                font-size: 2rem;
+                top: 20px;
+                right: 20px;
             }
 
             .immersive-close {
-                top: 16px;
-                left: 16px;
+                top: 20px;
+                left: 20px;
                 width: 40px;
                 height: 40px;
             }
+
+            .train-empty h2 {
+                font-size: 1.6rem;
+            }
+
+            .gallery-header h1,
+            .stats-header h1 {
+                font-size: 1.6rem;
+            }
         }
 
-        /* Hidden file input */
         #file-input {
             display: none;
         }
@@ -852,29 +959,34 @@
     <input type="file" id="file-input" accept="image/*">
 
     <div class="app">
-        <!-- Views Container -->
         <div class="views">
             <!-- Train View -->
             <div class="view train-view active" id="train-view">
                 <div class="train-empty" id="train-empty">
-                    <div class="train-empty-icon">👁️</div>
-                    <h2>Ready to Train?</h2>
-                    <p>Select an image from your gallery to start visualization training. Hold to hide the image and
-                        visualize it in your mind.</p>
-                    <button class="train-empty-btn" id="go-gallery-btn">
-                        <span>🖼️</span> Open Gallery
+                    <div class="train-empty-icon">
+                        <i data-lucide="eye"></i>
+                    </div>
+                    <h2>Begin Your Practice</h2>
+                    <p>Select an image from your collection to commence visualization training. Master the art of
+                        holding images in your mind's eye.</p>
+                    <button class="btn-primary" id="go-gallery-btn">
+                        <i data-lucide="image"></i>
+                        View Collection
                     </button>
                 </div>
 
                 <div class="train-active" id="train-active">
                     <div class="train-image-wrap" id="train-image-wrap">
                         <img class="train-image" id="train-image" src="" alt="Training image">
-                        <div class="train-tap-hint">Tap to enter focus mode</div>
+                        <div class="train-tap-hint">
+                            <i data-lucide="maximize"></i>
+                            Tap to enter focus mode
+                        </div>
                     </div>
                     <div class="train-stats">
                         <div class="train-stat">
                             <div class="train-stat-value" id="train-best">0.00s</div>
-                            <div class="train-stat-label">Best Time</div>
+                            <div class="train-stat-label">Personal Best</div>
                         </div>
                         <div class="train-stat">
                             <div class="train-stat-value" id="train-sessions">0</div>
@@ -891,22 +1003,17 @@
             <!-- Gallery View -->
             <div class="view" id="gallery-view">
                 <div class="gallery-header">
-                    <h1>Gallery</h1>
+                    <h1>Collection</h1>
                     <span class="gallery-count" id="gallery-count">0 images</span>
                 </div>
-                <div class="gallery-grid" id="gallery-grid">
-                    <div class="gallery-add" id="add-image-btn">
-                        <span class="gallery-add-icon">+</span>
-                        <span class="gallery-add-text">Add Image</span>
-                    </div>
-                </div>
+                <div class="gallery-grid" id="gallery-grid"></div>
             </div>
 
             <!-- Stats View -->
             <div class="view" id="stats-view">
                 <div class="stats-header">
-                    <h1>Statistics</h1>
-                    <p>Your visualization training progress</p>
+                    <h1>Progress</h1>
+                    <p>Your visualization journey at a glance</p>
                 </div>
 
                 <div class="stats-cards">
@@ -916,21 +1023,21 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-total-time">0m</div>
-                        <div class="stat-card-label">Total Time</div>
+                        <div class="stat-card-label">Time Invested</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-best-ever">0.00s</div>
-                        <div class="stat-card-label">Best Ever</div>
+                        <div class="stat-card-label">Best Record</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-value" id="stat-images">0</div>
-                        <div class="stat-card-label">Images</div>
+                        <div class="stat-card-label">In Collection</div>
                     </div>
                 </div>
 
                 <div class="history-section">
                     <div class="history-header">
-                        <h3>Recent Sessions</h3>
+                        <h3>Session History</h3>
                         <div class="history-filters">
                             <select id="filter-image">
                                 <option value="">All Images</option>
@@ -944,42 +1051,46 @@
                     </div>
                     <div class="history-list" id="history-list"></div>
                     <div class="history-pagination">
-                        <button id="prev-page">← Prev</button>
+                        <button id="prev-page"><i data-lucide="chevron-left"></i></button>
                         <span id="page-info">Page 1 of 1</span>
-                        <button id="next-page">Next →</button>
+                        <button id="next-page"><i data-lucide="chevron-right"></i></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
+        <!-- Navigation -->
         <nav class="nav">
             <button class="nav-btn active" data-view="train-view">
-                <span class="icon">🎯</span>
+                <i data-lucide="target"></i>
                 <span>Train</span>
             </button>
             <button class="nav-btn" data-view="gallery-view">
-                <span class="icon">🖼️</span>
-                <span>Gallery</span>
+                <i data-lucide="layout-grid"></i>
+                <span>Collection</span>
             </button>
             <button class="nav-btn" data-view="stats-view">
-                <span class="icon">📊</span>
-                <span>Stats</span>
+                <i data-lucide="bar-chart-2"></i>
+                <span>Progress</span>
             </button>
             <button class="nav-btn" id="help-nav-btn">
-                <span class="icon">❓</span>
-                <span>Help</span>
+                <i data-lucide="book-open"></i>
+                <span>Guide</span>
             </button>
         </nav>
     </div>
 
-    <!-- Immersive Training Mode -->
+    <!-- Immersive Mode -->
     <div class="immersive" id="immersive">
-        <button class="immersive-close" id="immersive-close">✕</button>
+        <button class="immersive-close" id="immersive-close">
+            <i data-lucide="x"></i>
+        </button>
         <div class="immersive-timer" id="immersive-timer">0.00s</div>
         <img class="immersive-image" id="immersive-image" src="" alt="Focus image">
         <div class="immersive-hint">
-            Hold <kbd>Space</kbd> or tap & hold to visualize • <kbd>Esc</kbd> to exit
+            Hold <kbd>Space</kbd> to visualize
+            <span>·</span>
+            <kbd>Esc</kbd> to exit
         </div>
     </div>
 
@@ -987,35 +1098,37 @@
     <div class="modal-overlay" id="help-modal">
         <div class="modal">
             <div class="modal-header">
-                <h2>📖 How to Use</h2>
-                <button class="modal-close" id="help-close">✕</button>
+                <h2><i data-lucide="book-open"></i> Practitioner's Guide</h2>
+                <button class="modal-close" id="help-close">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="help-section">
-                    <h3>🎯 Training</h3>
+                    <h3><i data-lucide="target"></i> The Practice</h3>
                     <ul class="help-list">
-                        <li>1. Add images in the Gallery tab</li>
-                        <li>2. Select an image to train with</li>
-                        <li>3. Tap the image to enter focus mode</li>
-                        <li>4. Study the image, then hold to hide it</li>
-                        <li>5. Visualize in your mind as long as you can!</li>
+                        <li>Add images to your collection</li>
+                        <li>Select an image and enter focus mode</li>
+                        <li>Study the image, then hold to hide it</li>
+                        <li>Visualize in your mind as long as possible</li>
+                        <li>Release to record your time</li>
                     </ul>
                 </div>
                 <div class="help-section">
-                    <h3>⌨️ Keyboard</h3>
+                    <h3><i data-lucide="keyboard"></i> Controls</h3>
                     <ul class="help-list">
                         <li><kbd>Space</kbd> Hold to visualize</li>
                         <li><kbd>Esc</kbd> Exit focus mode</li>
-                        <li><kbd>1-4</kbd> Switch tabs</li>
-                        <li><kbd>?</kbd> Toggle help</li>
+                        <li><kbd>1-4</kbd> Switch sections</li>
+                        <li><kbd>?</kbd> Toggle this guide</li>
                     </ul>
                 </div>
                 <div class="help-section">
-                    <h3>💡 Tips</h3>
+                    <h3><i data-lucide="sparkles"></i> Advice</h3>
                     <ul class="help-list">
-                        <li>Start with simple images</li>
-                        <li>Practice daily for best results</li>
-                        <li>Try to beat your best time!</li>
+                        <li>Begin with simple images</li>
+                        <li>Practice with consistency</li>
+                        <li>Challenge your personal records</li>
                     </ul>
                 </div>
             </div>
@@ -1023,6 +1136,9 @@
     </div>
 
     <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         // ========== DOM ==========
         const $ = id => document.getElementById(id);
         const $$ = sel => document.querySelectorAll(sel);
@@ -1031,7 +1147,6 @@
         const views = $$('.view');
         const navBtns = $$('.nav-btn[data-view]');
         const helpNavBtn = $('help-nav-btn');
-        const trainView = $('train-view');
         const trainEmpty = $('train-empty');
         const trainActive = $('train-active');
         const trainImage = $('train-image');
@@ -1040,11 +1155,8 @@
         const trainSessions = $('train-sessions');
         const trainTotal = $('train-total');
         const goGalleryBtn = $('go-gallery-btn');
-        const galleryView = $('gallery-view');
         const galleryGrid = $('gallery-grid');
         const galleryCount = $('gallery-count');
-        const addImageBtn = $('add-image-btn');
-        const statsView = $('stats-view');
         const statTotalSessions = $('stat-total-sessions');
         const statTotalTime = $('stat-total-time');
         const statBestEver = $('stat-best-ever');
@@ -1090,7 +1202,6 @@
                     }));
                 }
             } catch (e) {
-                console.error('Load error:', e);
                 images = [];
             }
         };
@@ -1106,20 +1217,16 @@
             if (viewId === 'train-view') renderTrain();
         }
 
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', () => switchView(btn.dataset.view));
-        });
-
+        navBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
         goGalleryBtn.addEventListener('click', () => switchView('gallery-view'));
 
         // ========== GALLERY ==========
         function renderGallery() {
             galleryGrid.innerHTML = '';
 
-            // Add button first
             const addCard = document.createElement('div');
             addCard.className = 'gallery-add';
-            addCard.innerHTML = '<span class="gallery-add-icon">+</span><span class="gallery-add-text">Add Image</span>';
+            addCard.innerHTML = '<i data-lucide="plus"></i><span>Add Image</span>';
             addCard.addEventListener('click', () => fileInput.click());
             galleryGrid.appendChild(addCard);
 
@@ -1132,13 +1239,13 @@
                         <div class="gallery-card-best">${(img.highScore || 0).toFixed(2)}s</div>
                         <div class="gallery-card-sessions">${(img.sessions || []).length} sessions</div>
                     </div>
-                    <button class="gallery-card-delete">✕</button>
+                    <button class="gallery-card-delete"><i data-lucide="trash-2"></i></button>
                 `;
 
                 card.addEventListener('click', e => {
-                    if (e.target.classList.contains('gallery-card-delete')) {
+                    if (e.target.closest('.gallery-card-delete')) {
                         e.stopPropagation();
-                        if (confirm('Delete this image?')) {
+                        if (confirm('Remove this image from your collection?')) {
                             images = images.filter(i => i.id !== img.id);
                             if (selectedImageId === img.id) selectedImageId = null;
                             save();
@@ -1157,6 +1264,7 @@
             });
 
             galleryCount.textContent = `${images.length} image${images.length !== 1 ? 's' : ''}`;
+            lucide.createIcons();
         }
 
         // ========== FILE UPLOAD ==========
@@ -1221,18 +1329,13 @@
             immersiveImage.style.opacity = '1';
             immersiveTimer.textContent = '0.00s';
 
-            // Request browser fullscreen
             try {
                 if (immersive.requestFullscreen) {
                     await immersive.requestFullscreen();
                 } else if (immersive.webkitRequestFullscreen) {
                     await immersive.webkitRequestFullscreen();
-                } else if (immersive.msRequestFullscreen) {
-                    await immersive.msRequestFullscreen();
                 }
-            } catch (e) {
-                console.log('Fullscreen not available:', e);
-            }
+            } catch (e) { }
         }
 
         async function exitImmersive() {
@@ -1240,21 +1343,15 @@
             isImmersive = false;
             immersive.classList.remove('active');
 
-            // Exit browser fullscreen
             try {
                 if (document.fullscreenElement) {
                     await document.exitFullscreen();
                 } else if (document.webkitFullscreenElement) {
                     await document.webkitExitFullscreen();
-                } else if (document.msFullscreenElement) {
-                    await document.msExitFullscreen();
                 }
-            } catch (e) {
-                console.log('Exit fullscreen error:', e);
-            }
+            } catch (e) { }
         }
 
-        // Handle browser fullscreen exit (user pressed Esc directly)
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement && isImmersive) {
                 isImmersive = false;
@@ -1266,9 +1363,7 @@
         immersiveClose.addEventListener('click', exitImmersive);
 
         immersive.addEventListener('click', e => {
-            if (e.target === immersive && !isVisualizing) {
-                exitImmersive();
-            }
+            if (e.target === immersive && !isVisualizing) exitImmersive();
         });
 
         // ========== VISUALIZATION ==========
@@ -1311,39 +1406,27 @@
             }
         }
 
-        // Touch/mouse for immersive
         let touchStarted = false;
 
         immersive.addEventListener('mousedown', e => {
-            if (e.target !== immersiveClose && isImmersive) {
-                startVisualize();
-            }
+            if (e.target !== immersiveClose && !e.target.closest('.immersive-close') && isImmersive) startVisualize();
         });
-
-        immersive.addEventListener('mouseup', () => {
-            if (isVisualizing) stopVisualize();
-        });
+        immersive.addEventListener('mouseup', () => { if (isVisualizing) stopVisualize(); });
 
         immersive.addEventListener('touchstart', e => {
-            if (e.target !== immersiveClose && isImmersive) {
+            if (e.target !== immersiveClose && !e.target.closest('.immersive-close') && isImmersive) {
                 touchStarted = true;
                 startVisualize();
             }
         }, { passive: true });
-
         immersive.addEventListener('touchend', () => {
-            if (touchStarted && isVisualizing) {
-                stopVisualize();
-            }
+            if (touchStarted && isVisualizing) stopVisualize();
             touchStarted = false;
         });
 
         // ========== STATS VIEW ==========
         function renderStats() {
-            // Global stats
-            let totalSessions = 0;
-            let totalTime = 0;
-            let bestEver = 0;
+            let totalSessions = 0, totalTime = 0, bestEver = 0;
 
             images.forEach(img => {
                 (img.sessions || []).forEach(s => {
@@ -1358,7 +1441,6 @@
             statBestEver.textContent = `${bestEver.toFixed(2)}s`;
             statImages.textContent = images.length;
 
-            // Filter dropdown
             filterImage.innerHTML = '<option value="">All Images</option>';
             images.forEach((img, i) => {
                 filterImage.innerHTML += `<option value="${img.id}">Image ${i + 1}</option>`;
@@ -1378,7 +1460,6 @@
                 });
             });
 
-            // Sort by date desc
             allSessions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             const totalPages = Math.ceil(allSessions.length / historyPerPage) || 1;
@@ -1394,8 +1475,8 @@
                     <div class="history-item" data-date="${s.date}" data-image="${s.imageId}">
                         <span class="history-item-time">${s.time.toFixed(2)}s</span>
                         <span class="history-item-date">${new Date(s.date).toLocaleString()}</span>
-                        <span class="history-item-note">${s.note || '-'}</span>
-                        <button class="history-item-delete">✕</button>
+                        <span class="history-item-note">${s.note || '—'}</span>
+                        <button class="history-item-delete"><i data-lucide="x"></i></button>
                     </div>
                 `).join('');
             }
@@ -1403,10 +1484,12 @@
             pageInfo.textContent = `Page ${historyPage} of ${totalPages}`;
             prevPage.disabled = historyPage <= 1;
             nextPage.disabled = historyPage >= totalPages;
+
+            lucide.createIcons();
         }
 
         historyList.addEventListener('click', e => {
-            if (e.target.classList.contains('history-item-delete')) {
+            if (e.target.closest('.history-item-delete')) {
                 const item = e.target.closest('.history-item');
                 const date = item.dataset.date;
                 const imageId = item.dataset.image;
@@ -1414,8 +1497,7 @@
                 const img = images.find(i => i.id === imageId);
                 if (img) {
                     img.sessions = img.sessions.filter(s => s.date !== date);
-                    // Recalculate high score
-                    img.highScore = Math.max(0, ...img.sessions.map(s => s.time));
+                    img.highScore = Math.max(0, ...img.sessions.map(s => s.time), 0);
                     save();
                     renderStats();
                     renderTrain();
@@ -1435,28 +1517,15 @@
             renderHistory();
         });
 
-        prevPage.addEventListener('click', () => {
-            if (historyPage > 1) {
-                historyPage--;
-                renderHistory();
-            }
-        });
+        prevPage.addEventListener('click', () => { if (historyPage > 1) { historyPage--; renderHistory(); } });
+        nextPage.addEventListener('click', () => { historyPage++; renderHistory(); });
 
-        nextPage.addEventListener('click', () => {
-            historyPage++;
-            renderHistory();
-        });
-
-        // ========== HELP MODAL ==========
-        function toggleHelp(show) {
-            helpModal.classList.toggle('active', show);
-        }
+        // ========== HELP ==========
+        function toggleHelp(show) { helpModal.classList.toggle('active', show); }
 
         helpNavBtn.addEventListener('click', () => toggleHelp(true));
         helpClose.addEventListener('click', () => toggleHelp(false));
-        helpModal.addEventListener('click', e => {
-            if (e.target === helpModal) toggleHelp(false);
-        });
+        helpModal.addEventListener('click', e => { if (e.target === helpModal) toggleHelp(false); });
 
         // ========== KEYBOARD ==========
         document.addEventListener('keydown', e => {
@@ -1465,46 +1534,28 @@
             switch (e.key) {
                 case ' ':
                     e.preventDefault();
-                    if (isImmersive && !isVisualizing) {
-                        startVisualize();
-                    } else if (selectedImageId && !isImmersive) {
-                        enterImmersive();
-                    }
+                    if (isImmersive && !isVisualizing) startVisualize();
+                    else if (selectedImageId && !isImmersive) enterImmersive();
                     break;
                 case 'Escape':
-                    if (helpModal.classList.contains('active')) {
-                        toggleHelp(false);
-                    } else if (isImmersive) {
-                        exitImmersive();
-                    }
+                    if (helpModal.classList.contains('active')) toggleHelp(false);
+                    else if (isImmersive) exitImmersive();
                     break;
-                case '1':
-                    switchView('train-view');
-                    break;
-                case '2':
-                    switchView('gallery-view');
-                    break;
-                case '3':
-                    switchView('stats-view');
-                    break;
+                case '1': switchView('train-view'); break;
+                case '2': switchView('gallery-view'); break;
+                case '3': switchView('stats-view'); break;
                 case '4':
-                case '?':
-                    toggleHelp(!helpModal.classList.contains('active'));
-                    break;
+                case '?': toggleHelp(!helpModal.classList.contains('active')); break;
             }
         });
 
         document.addEventListener('keyup', e => {
-            if (e.key === ' ' && isVisualizing) {
-                stopVisualize();
-            }
+            if (e.key === ' ' && isVisualizing) stopVisualize();
         });
 
         // ========== INIT ==========
         load();
-        if (images.length > 0 && !selectedImageId) {
-            selectedImageId = images[0].id;
-        }
+        if (images.length > 0 && !selectedImageId) selectedImageId = images[0].id;
         renderTrain();
         renderGallery();
     </script>
